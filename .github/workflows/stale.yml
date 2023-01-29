@@ -1,0 +1,14 @@
+name: API GET request
+
+on:
+  schedule:
+    - cron: '*/5 6-20 * * *'
+
+jobs:
+  get-request:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get API data
+      run: |
+        curl https://pkapi.onrender.com/api/firms > data.json
