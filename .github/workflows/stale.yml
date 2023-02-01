@@ -2,7 +2,7 @@ name: API GET request
 
 on:
   schedule:
-    - cron: '*/5 6-20 * * *'
+    - cron: '*/5 5-21 * * *'
 
 jobs:
   get-request:
