@@ -11,11 +11,9 @@ public class PostFirmDTO
     [Required]
     [Display(Name = "image")]
     public IFormFile? Image { get; set; }
-    [Required]
     [MaxLength(3000)]
     [Display(Name = "English description")]
     public string? EnglishDescription { get; set; }
-    [Required]
     [MaxLength(3000)]
     [Display(Name = "Estonian description")]
     public string? EstonianDescription { get; set; }

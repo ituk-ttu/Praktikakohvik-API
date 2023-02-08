@@ -66,6 +66,7 @@ public class FirmsController : ControllerBase
         }
         validateName(newFirm.Name!, firms);
         validateImage(newFirm.Image!);
+        validateDescription(newFirm.EnglishDescription, newFirm.EstonianDescription);
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -150,6 +151,14 @@ public class FirmsController : ControllerBase
         if (firms.Any() && firms!.Any(x => x!.Name!.ToLower() == name.ToLower())) 
         {
             ModelState.AddModelError("Name", "This firm already exists.");
+        }
+    }
+
+    private void validateDescription(string? englishDescription, string? estonianDescription)
+    {
+        if (englishDescription == null && estonianDescription == null)
+        {
+            ModelState.AddModelError("EstonianDescription", "A description is required in at least one language.");
         }
     }
 }
