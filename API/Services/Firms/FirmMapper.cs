@@ -43,7 +43,7 @@ public class FirmMapper : IFirmMapper
                 Type = newFirm.Image!.ContentType 
             },
             Name = newFirm.Name,
-            ShortName = newFirm.ShortName,
+            ShortName = newFirm.ShortName?.ToUpper(),
             EnglishDescription = newFirm.EnglishDescription,
             EstonianDescription = newFirm.EstonianDescription,
             GridMapColumn = newFirm.GridMapColumn,
@@ -62,7 +62,7 @@ public class FirmMapper : IFirmMapper
             };
         }
         oldFirm.Name = newFirm.Name ?? oldFirm.Name;
-        oldFirm.ShortName = newFirm.ShortName ?? oldFirm.ShortName;
+        oldFirm.ShortName = newFirm.ShortName?.ToUpper() ?? oldFirm.ShortName;
         oldFirm.EnglishDescription = newFirm.EnglishDescription;
         oldFirm.EstonianDescription = newFirm.EstonianDescription;
         oldFirm.GridMapColumn = newFirm.GridMapColumn;

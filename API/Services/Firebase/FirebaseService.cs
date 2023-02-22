@@ -71,7 +71,12 @@ public class FirebaseService : IFirebaseService
         {
             var pushResponse = _firebaseClient.Push("Map/", map);
             map.Id = pushResponse.Result.name;
+            _firebaseClient.Set("Map/" + map.Id, map);
         }
-        _firebaseClient.Set("Map/" + dbMap?.Id ?? map.Id, map);
+        else
+        {
+            dbMap.Status = status;
+            _firebaseClient.Set("Map/" + dbMap.Id, dbMap);
+        }
     }
 }

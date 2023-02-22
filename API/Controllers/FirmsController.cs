@@ -180,8 +180,7 @@ public class FirmsController : ControllerBase
     {
         if (
             row != null && column != null 
-            && firms.Any(x => x!.GridMapRow?.ToLower() == row.ToLower()) 
-            && firms.Any(x => x!.GridMapColumn?.ToLower() == column.ToLower())) 
+            && firms.Any(x => x!.GridMapRow == row && x!.GridMapColumn == column)) 
         {
             ModelState.AddModelError("GridMapRow", "This table is already taken.");
         }
