@@ -14,8 +14,10 @@ public class FirebaseService : IFirebaseService
         _firebaseClient = new FireSharp.FirebaseClient(
             new FirebaseConfig
             {
-                AuthSecret = Environment.GetEnvironmentVariable("AUTH"), 
-                BasePath = Environment.GetEnvironmentVariable("URL")
+                // AuthSecret = Environment.GetEnvironmentVariable("AUTH"), 
+                // BasePath = Environment.GetEnvironmentVariable("URL")
+                AuthSecret = "B7ljsAthzLH2lKGMX3KSFIJENzRWP2aQmTb1j6ms", 
+                BasePath = "https://pk-test-ce0e6-default-rtdb.europe-west1.firebasedatabase.app/"
             }
         );
     }
@@ -55,4 +57,23 @@ public class FirebaseService : IFirebaseService
 
     public void DeleteFirm(string id) 
         => _firebaseClient.Delete("Firms/" + id);
+
+    public Map? GetMap()
+    {
+        var response = _firebaseClient.Get("Map");
+        return JsonConvert.DeserializeObject<Map>(response.Body);
+    }
+
+    public void UpdateMapStatus(bool status)
+    {
+        var map = new Map() { Status = status };
+        
+        var dbMap = GetMap();
+        if (dbMap == null)
+        {
+            var pushResponse = _firebaseClient.Push("Map/", map);
+            map.Id = pushResponse.Result.name;
+        }
+        _firebaseClient.Set("Map/" + dbMap?.Id ?? map.Id, map);
+    }
 }

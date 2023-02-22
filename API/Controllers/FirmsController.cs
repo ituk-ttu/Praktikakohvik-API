@@ -34,7 +34,12 @@ public class FirmsController : ControllerBase
         if (firms == null || firms.Count == 0) return Ok(Array.Empty<GetFirmsDTO>());
 
         var firmDTOs = firms.Where(x => x != null).Select(x => _mapper.MapModelToGetDTO(x!));
-        return Ok(firmDTOs.OrderBy(f => f.Name));
+        var dto = new GetDTO() 
+        {
+            DisplayMap = _firebaseService.GetMap()?.Status ?? false,
+            Firms = firmDTOs.OrderBy(f => f.Name).ToList()
+        };
+        return Ok(dto);
     }
 
     [HttpGet("{Id}")]
@@ -67,6 +72,7 @@ public class FirmsController : ControllerBase
         validateName(newFirm.Name!, firms);
         validateImage(newFirm.Image!);
         validateDescription(newFirm.EnglishDescription, newFirm.EstonianDescription);
+        validatePlacement(newFirm.GridMapRow, newFirm.GridMapColumn, firms);
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -86,27 +92,35 @@ public class FirmsController : ControllerBase
             return Unauthorized();
         }
 
-        var olfFirm = _firebaseService.GetFirm(Id);
-        if (olfFirm == null)
+        var oldFirm = _firebaseService.GetFirm(Id);
+        if (oldFirm == null)
         {
             return NotFound();
         }
 
-        if (formFirm.Name != null && formFirm.Name != olfFirm.Name)
+        var firms = _firebaseService.GetFirms();
+
+        if (formFirm.Name != null && formFirm.Name != oldFirm.Name)
         {
-            var firms = _firebaseService.GetFirms();
             validateName(formFirm.Name, firms);
         }
         if (formFirm.Image != null)
         {
             validateImage(formFirm.Image);
         }
+        if (formFirm.GridMapColumn != null 
+            && formFirm.GridMapRow != null 
+            && oldFirm.GridMapColumn != formFirm.GridMapColumn 
+            && oldFirm.GridMapRow != formFirm.GridMapRow)
+        {
+            validatePlacement(formFirm.GridMapRow!, formFirm.GridMapColumn!, firms);
+        }
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var updatedFirm = _mapper.MapPutDTOToOldModel(olfFirm, formFirm);
+        var updatedFirm = _mapper.MapPutDTOToOldModel(oldFirm, formFirm);
         _firebaseService.PutFirm(Id, updatedFirm);
 
         return GetFirm(Id);
@@ -159,6 +173,17 @@ public class FirmsController : ControllerBase
         if (englishDescription == null && estonianDescription == null)
         {
             ModelState.AddModelError("EstonianDescription", "A description is required in at least one language.");
+        }
+    }
+
+    private void validatePlacement(string? row, string? column, List<Firm?> firms)
+    {
+        if (
+            row != null && column != null 
+            && firms.Any(x => x!.GridMapRow?.ToLower() == row.ToLower()) 
+            && firms.Any(x => x!.GridMapColumn?.ToLower() == column.ToLower())) 
+        {
+            ModelState.AddModelError("GridMapRow", "This table is already taken.");
         }
     }
 }

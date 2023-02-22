@@ -9,4 +9,6 @@ public interface IFirebaseService
     string PostFirm(Firm newFirm);
     void PutFirm(string id, Firm updatedFirm);
     void DeleteFirm(string id);
+    Map? GetMap();
+    void UpdateMapStatus(bool status);
 }
