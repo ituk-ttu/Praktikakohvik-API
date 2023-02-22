@@ -14,10 +14,8 @@ public class FirebaseService : IFirebaseService
         _firebaseClient = new FireSharp.FirebaseClient(
             new FirebaseConfig
             {
-                // AuthSecret = Environment.GetEnvironmentVariable("AUTH"), 
-                // BasePath = Environment.GetEnvironmentVariable("URL")
-                AuthSecret = "B7ljsAthzLH2lKGMX3KSFIJENzRWP2aQmTb1j6ms", 
-                BasePath = "https://pk-test-ce0e6-default-rtdb.europe-west1.firebasedatabase.app/"
+                AuthSecret = Environment.GetEnvironmentVariable("AUTH"), 
+                BasePath = Environment.GetEnvironmentVariable("URL")
             }
         );
     }
